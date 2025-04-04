@@ -1,125 +1,210 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% translate "Zadanie rekrutacyjne - Szczegóły wydarzenia" %}{% endblock %}
+{% block title %}{{ event.name }} | {% translate "Szczegóły Wydarzenia" %}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="border-bottom pb-2">{% translate "Zadanie rekrutacyjne - Szczegóły wydarzenia" %}</h1>
+<!-- Breadcrumb navigation -->
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">{% translate "Strona główna" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'monthly_events' %}">{% translate "Wydarzenia" %}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ event.name }}</li>
+    </ol>
+</nav>
+
+<!-- Event header -->
+<div class="card mb-4">
+    <div class="card-header event-detail-header" style="background-color: {{ event.color }};">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="mb-0 fs-2">{{ event.name }}</h1>
+            <div>
+                <a href="{% url 'event_edit' event.pk %}" class="btn btn-light">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    {% translate "Edytuj wydarzenie" %}
+                </a>
+            </div>
         </div>
     </div>
     
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Opis zadania" %}</h2>
+    <div class="card-body event-detail-body">
+        <!-- Event description section -->
+        <section class="event-detail-section">
+            <h2 class="fs-4 mb-3">{% translate "Opis" %}</h2>
+            <div class="bg-light p-3 rounded">
+                <p>{{ event.description }}</p>
+            </div>
+        </section>
+        
+        <!-- Event date and time section -->
+        <section class="event-detail-section">
+            <h2 class="fs-4 mb-3">{% translate "Data i czas" %}</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="fs-5 card-title">{% translate "Początek" %}</h3>
+                            <div class="d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <div>
+                                    <div class="fs-4">{{ event.start_date|date:"j E Y" }}</div>
+                                    <div>{{ event.start_date|date:"H:i" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p>{% translate "Twoim zadaniem jest zaimplementowanie widoku szczegółów wydarzenia zgodnie z poniższą specyfikacją. Widok ten powinien prezentować wszystkie istotne informacje o wydarzeniu." %}</p>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "Wymagania ogólne:" %}</h3>
-                    <ul>
-                        <li>{% translate "Implementacja musi być w pełni zgodna ze standardami WCAG AAA (Web Content Accessibility Guidelines)." %}</li>
-                        <li>{% translate "Design musi być responsywny i działać poprawnie na urządzeniach mobilnych, tabletach i desktopach." %}</li>
-                        <li>{% translate "Wszystkie elementy interfejsu muszą być zgodne z księgą znaku Uniwersytetu w Siedlcach." %}</li>
-                        <li>{% translate "Podstawowy kolor marki to #003d7c. Użyj go jako głównego koloru akcentowego." %}</li>
-                        <li>{% translate "Należy wykorzystać Bootstrap 5 jako bazowy framework CSS." %}</li>
-                    </ul>
+                <div class="col-md-6 mt-3 mt-md-0">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="fs-5 card-title">{% translate "Koniec" %}</h3>
+                            <div class="d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <div>
+                                    <div class="fs-4">{{ event.end_date|date:"j E Y" }}</div>
+                                    <div>{{ event.end_date|date:"H:i" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row mb-5">
-        <div class="col-12">
+        </section>
+        
+        <!-- Event location section -->
+        <section class="event-detail-section">
+            <h2 class="fs-4 mb-3">{% translate "Lokalizacja i tryb" %}</h2>
             <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Dane przekazywane do szablonu" %}</h2>
-                </div>
                 <div class="card-body">
-                    <p>{% translate "Do szablonu przekazywane są następujące dane:" %}</p>
-                    
-                    <h3 class="fs-5 mt-3">{% translate "1. Obiekt wydarzenia (event):" %}</h3>
-                    <ul>
-                        <li><code>event.name</code> - {% translate "nazwa wydarzenia (string)" %}</li>
-                        <li><code>event.description</code> - {% translate "opis wydarzenia (text)" %}</li>
-                        <li><code>event.start_date</code> - {% translate "data i czas rozpoczęcia (datetime)" %}</li>
-                        <li><code>event.end_date</code> - {% translate "data i czas zakończenia (datetime)" %}</li>
-                        <li><code>event.location</code> - {% translate "miejsce wydarzenia (string)" %}</li>
-                        <li><code>event.mode</code> - {% translate "tryb wydarzenia (integer, mapowany na 'online', 'stacjonarny', 'hybrydowy')" %}</li>
-                        <li><code>event.get_mode_display</code> - {% translate "przetłumaczona nazwa trybu (string)" %}</li>
-                        <li><code>event.organizer</code> - {% translate "organizator wydarzenia (string)" %}</li>
-                        <li><code>event.capacity</code> - {% translate "maksymalna liczba uczestników (integer)" %}</li>
-                        <li><code>event.color</code> - {% translate "kolor wydarzenia (string w formacie HEX)" %}</li>
-                        <li><code>event.created_at</code> - {% translate "data utworzenia wydarzenia (datetime)" %}</li>
-                        <li><code>event.updated_at</code> - {% translate "data ostatniej aktualizacji (datetime)" %}</li>
-                        <li><code>event.pk</code> - {% translate "identyfikator wydarzenia (integer)" %}</li>
-                    </ul>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3 class="fs-5">{% translate "Lokalizacja" %}</h3>
+                            <div class="d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span class="fs-5">{{ event.location }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <h3 class="fs-5">{% translate "Tryb" %}</h3>
+                            <div class="d-flex align-items-center">
+                                {% if event.mode == 'remote' %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                                {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                {% endif %}
+                                <span class="fs-5">{{ event.get_mode_display }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row mb-5">
-        <div class="col-12">
+        </section>
+        
+        <!-- Organizer section -->
+        <section class="event-detail-section">
+            <h2 class="fs-4 mb-3">{% translate "Organizator" %}</h2>
             <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Elementy do zaimplementowania" %}</h2>
-                </div>
                 <div class="card-body">
-                    <h3 class="fs-5">{% translate "1. Nawigacja:" %}</h3>
-                    <ul>
-                        <li>{% translate "Ścieżka nawigacyjna (breadcrumb) pokazująca hierarchię: Strona główna > Wydarzenia > Nazwa wydarzenia" %}</li>
-                        <li>{% translate "Przycisk edycji wydarzenia (widoczny tylko dla uprawnionych użytkowników)" %}</li>
-                    </ul>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "2. Karta główna wydarzenia:" %}</h3>
-                    <ul>
-                        <li>{% translate "Nagłówek karty z nazwą wydarzenia i tłem w kolorze wydarzenia" %}</li>
-                        <li>{% translate "Sekcja z opisem wydarzenia" %}</li>
-                        <li>{% translate "Sekcja z datą i czasem (początek i koniec)" %}</li>
-                        <li>{% translate "Sekcja z lokalizacją i trybem wydarzenia (online/stacjonarny/hybrydowy)" %}</li>
-                        <li>{% translate "Sekcja z informacją o organizatorze" %}</li>
-                    </ul>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "4. Dodatkowe informacje:" %}</h3>
-                    <ul>
-                        <li>{% translate "Sekcja z datą utworzenia wydarzenia" %}</li>
-                        <li>{% translate "Sekcja z datą ostatniej aktualizacji" %}</li>
-                    </ul>
+                    <div class="d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="fs-5">{{ event.organizer }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
+        </section>
+        
+        <!-- Capacity section -->
+        <section class="event-detail-section">
+            <h2 class="fs-4 mb-3">{% translate "Pojemność" %}</h2>
             <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Uwagi dotyczące dostępności" %}</h2>
-                </div>
                 <div class="card-body">
-                    <p>{% translate "Implementacja musi spełniać następujące wymagania WCAG AAA:" %}</p>
-                    <ul>
-                        <li>{% translate "Wszystkie elementy interaktywne muszą być dostępne z klawiatury" %}</li>
-                        <li>{% translate "Struktura nagłówków musi być logiczna i hierarchiczna (h1 > h2 > h3)" %}</li>
-                        <li>{% translate "Kontrasty kolorystyczne muszą spełniać wymagania WCAG AAA (7:1)" %}</li>
-                        <li>{% translate "Wszystkie elementy nietekstowe muszą mieć alternatywę tekstową" %}</li>
-                        <li>{% translate "Rozmiar tekstu musi być skalowalny bez utraty funkcjonalności" %}</li>
-                        <li>{% translate "Należy użyć atrybutów ARIA tam, gdzie jest to konieczne" %}</li>
-                    </ul>
-                    
-                    <p class="mt-4">{% translate "Linki referencyjne:" %}</p>
-                    <ul>
-                        <li><a href="https://www.uws.edu.pl/images/UPH_2023/szablon/logo-UwS/UWS-ksiega-znaku.pdf" target="_blank" rel="noopener noreferrer">{% translate "Księga znaku Uniwersytetu w Siedlcach" %}</a></li>
-                        <li><a href="https://www.w3.org/WAI/WCAG21/quickref/?versions=2.1&levels=aaa" target="_blank" rel="noopener noreferrer">{% translate "Wytyczne WCAG 2.1 AAA" %}</a></li>
-                    </ul>
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span class="fs-5">{{ event.registered }} / {{ event.capacity }} {% translate "uczestników" %}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <div class="progress" role="progressbar" aria-valuenow="{{ event.get_percent_full }}" aria-valuemin="0" aria-valuemax="100" style="height: 25px;">
+                                <div class="progress-bar {% if event.is_full %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ event.get_percent_full }}%">
+                                    {{ event.get_percent_full }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+        
+        <!-- Additional metadata section -->
+        <section class="event-detail-section">
+            <div class="card">
+                <div class="card-body event-detail-meta">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <strong>{% translate "Utworzono" %}:</strong>
+                                <time datetime="{{ event.created_at|date:'c' }}">{{ event.created_at|date:"j E Y, H:i" }}</time>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <strong>{% translate "Ostatnia aktualizacja" %}:</strong>
+                                <time datetime="{{ event.updated_at|date:'c' }}">{{ event.updated_at|date:"j E Y, H:i" }}</time>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
-{% endblock %} 
+
+<!-- Back button -->
+<div class="d-flex justify-content-center mt-4">
+    <a href="{% url 'monthly_events' %}" class="btn btn-outline-primary me-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        {% translate "Powrót do wydarzeń" %}
+    </a>
+    <a href="{% url 'event_edit' event.pk %}" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        {% translate "Edytuj wydarzenie" %}
+    </a>
+</div>
+{% endblock %}

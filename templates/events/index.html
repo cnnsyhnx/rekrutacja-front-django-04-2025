@@ -1,143 +1,135 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% translate "Zadanie rekrutacyjne - Strona główna" %}{% endblock %}
+{% block title %}{% translate "Menedżer Wydarzeń UWS - Strona Główna" %}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="border-bottom pb-2">{% translate "Zadanie rekrutacyjne - Strona główna" %}</h1>
-        </div>
-    </div>
-    
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Opis zadania" %}</h2>
-                </div>
-                <div class="card-body">
-                    <p>{% translate "Twoim zadaniem jest zaimplementowanie strony głównej systemu zarządzania wydarzeniami zgodnie z poniższą specyfikacją. Strona główna powinna prezentować podstawowe informacje o systemie oraz nadchodzące wydarzenia w atrakcyjny i przejrzysty sposób." %}</p>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "Wymagania ogólne:" %}</h3>
-                    <ul>
-                        <li>{% translate "Implementacja musi być w pełni zgodna ze standardami WCAG AAA (Web Content Accessibility Guidelines)." %}</li>
-                        <li>{% translate "Design musi być responsywny i działać poprawnie na urządzeniach mobilnych, tabletach i desktopach." %}</li>
-                        <li>{% translate "Wszystkie elementy interfejsu muszą być zgodne z księgą znaku Uniwersytetu w Siedlcach." %}</li>
-                        <li>{% translate "Podstawowy kolor marki to #003d7c. Użyj go jako głównego koloru akcentowego." %}</li>
-                        <li>{% translate "Należy wykorzystać Bootstrap 5 jako bazowy framework CSS." %}</li>
-                    </ul>
+<!-- Jumbotron / Welcome Section -->
+<section class="jumbotron bg-light my-4 rounded">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold" id="welcome-heading">{% translate "Witamy w Menedżerze Wydarzeń UWS" %}</h1>
+                <p class="lead">{% translate "Twoja centralna platforma do zarządzania wydarzeniami i aktywnościami" %}</p>
+                <p>{% translate "Twórz, zarządzaj i odkrywaj wydarzenia z łatwością. Niezależnie od tego, czy organizujesz konferencję, warsztaty, czy spotkanie, nasza platforma ma wszystko, czego potrzebujesz." %}</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+                    <a href="{% url 'monthly_events' %}" class="btn btn-primary btn-lg px-4 me-md-2" aria-describedby="welcome-heading">
+                        {% translate "Przeglądaj Wydarzenia" %}
+                    </a>
+                    <a href="{% url 'event_create' %}" class="btn btn-outline-primary btn-lg px-4">
+                        {% translate "Utwórz Wydarzenie" %}
+                    </a>
                 </div>
             </div>
+            <div class="col-lg-4 mt-5 mt-lg-0 text-center">
+                <!-- Calendar icon SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="#003d7c" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="8" cy="14" r="2"></circle>
+                    <circle cx="16" cy="14" r="2"></circle>
+                    <circle cx="8" cy="18" r="2"></circle>
+                    <circle cx="16" cy="18" r="2"></circle>
+                </svg>
+            </div>
         </div>
+    </div>
+</section>
+
+<!-- Upcoming Events Section -->
+<section class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">{% translate "Nadchodzące Wydarzenia" %}</h2>
+        <a href="{% url 'monthly_events' %}" class="btn btn-outline-primary">
+            {% translate "Zobacz Wszystkie" %}
+        </a>
     </div>
 
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Dane przekazywane do szablonu" %}</h2>
+    {% if upcoming_events %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for event in upcoming_events %}
+        <div class="col">
+            <article class="card event-card h-100" style="border-top: 4px solid {{ event.color }}">
+                <div class="card-header" style="background-color: {{ event.color }}">
+                    <h3 class="card-title fs-5 text-white mb-0">{{ event.name }}</h3>
                 </div>
-                <div class="card-body">
-                    <p>{% translate "Do szablonu przekazywane są następujące dane:" %}</p>
+                <div class="card-body d-flex flex-column">
+                    <p>{{ event.description|truncatewords:20 }}</p>
                     
-                    <h3 class="fs-5 mt-3">{% translate "Lista nadchodzących wydarzeń (upcoming_events):" %}</h3>
-                    <p>{% translate "Kolekcja obiektów nadchodzących wydarzeń, gdzie każde wydarzenie (event) zawiera następujące pola:" %}</p>
-                    <ul>
-                        <li><code>event.name</code> - {% translate "nazwa wydarzenia (string)" %}</li>
-                        <li><code>event.description</code> - {% translate "opis wydarzenia (text)" %}</li>
-                        <li><code>event.start_date</code> - {% translate "data i czas rozpoczęcia (datetime)" %}</li>
-                        <li><code>event.end_date</code> - {% translate "data i czas zakończenia (datetime)" %}</li>
-                        <li><code>event.location</code> - {% translate "miejsce wydarzenia (string)" %}</li>
-                        <li><code>event.mode</code> - {% translate "tryb wydarzenia (integer, mapowany na 'online', 'stacjonarny', 'hybrydowy')" %}</li>
-                        <li><code>event.get_mode_display</code> - {% translate "przetłumaczona nazwa trybu (string)" %}</li>
-                        <li><code>event.organizer</code> - {% translate "organizator wydarzenia (string)" %}</li>
-                        <li><code>event.capacity</code> - {% translate "maksymalna liczba uczestników (integer)" %}</li>
-                        <li><code>event.color</code> - {% translate "kolor wydarzenia (string w formacie HEX)" %}</li>
-                        <li><code>event.pk</code> - {% translate "identyfikator wydarzenia (integer)" %}</li>
-                    </ul>
+                    <div class="mt-auto">
+                        <div class="mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>
+                                <time datetime="{{ event.start_date|date:'c' }}">{{ event.start_date|date:'j E Y, H:i' }}</time>
+                                -
+                                <time datetime="{{ event.end_date|date:'c' }}">{{ event.end_date|date:'j E Y, H:i' }}</time>
+                            </span>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>{{ event.location }} ({{ event.get_mode_display }})</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>{{ event.organizer }}</span>
+                        </div>
+                        
+                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary stretched-link">
+                            {% translate "Zobacz Szczegóły" %}
+                        </a>
+                    </div>
                 </div>
-            </div>
+            </article>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#6c757d" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mb-3" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3 class="fs-4">{% translate "Brak nadchodzących wydarzeń" %}</h3>
+            <p class="text-muted">{% translate "W tej chwili nie ma zaplanowanych nadchodzących wydarzeń." %}</p>
+            <a href="{% url 'event_create' %}" class="btn btn-primary mt-3">
+                {% translate "Utwórz Nowe Wydarzenie" %}
+            </a>
         </div>
     </div>
+    {% endif %}
+</section>
 
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Elementy do zaimplementowania" %}</h2>
-                </div>
-                <div class="card-body">
-                    <h3 class="fs-5">{% translate "1. Sekcja powitalna (jumbotron):" %}</h3>
-                    <ul>
-                        <li>{% translate "Nagłówek powitalny z nazwą aplikacji ('Witamy w Menedżerze Wydarzeń')" %}</li>
-                        <li>{% translate "Podtytuł z krótkim opisem aplikacji" %}</li>
-                        <li>{% translate "Krótki tekst wyjaśniający funkcjonalności systemu" %}</li>
-                        <li>{% translate "Przyciski akcji:" %}
-                            <ul>
-                                <li>{% translate "Przycisk 'Przeglądaj wydarzenia' przekierowujący do listy wydarzeń" %}</li>
-                                <li>{% translate "Przycisk 'Utwórz wydarzenie' przekierowujący do formularza tworzenia wydarzenia" %}</li>
-                            </ul>
-                        </li>
-                    </ul>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "2. Sekcja nadchodzących wydarzeń:" %}</h3>
-                    <ul>
-                        <li>{% translate "Nagłówek sekcji ('Nadchodzące wydarzenia')" %}</li>
-                        <li>{% translate "Siatka kart wydarzeń (po 3 na szerokość dla dużych ekranów, 2 dla średnich, 1 dla małych)" %}</li>
-                        <li>{% translate "Każda karta wydarzenia powinna zawierać:" %}
-                            <ul>
-                                <li>{% translate "Nagłówek karty z nazwą wydarzenia na tle w kolorze wydarzenia" %}</li>
-                                <li>{% translate "Skrócony opis wydarzenia (maksymalnie 20 słów)" %}</li>
-                                <li>{% translate "Informację o dacie i czasie (początek i koniec)" %}</li>
-                                <li>{% translate "Informację o lokalizacji i trybie wydarzenia" %}</li>
-                                <li>{% translate "Informację o organizatorze" %}</li>
-                                <li>{% translate "Przycisk 'Zobacz szczegóły' przekierowujący do widoku szczegółów wydarzenia" %}</li>
-                            </ul>
-                        </li>
-                    </ul>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "3. Obsługa braku nadchodzących wydarzeń:" %}</h3>
-                    <ul>
-                        <li>{% translate "Komunikat informujący o braku nadchodzących wydarzeń" %}</li>
-                        <li>{% translate "Link zachęcający do utworzenia nowego wydarzenia" %}</li>
-                    </ul>
-                    
-                    <h3 class="fs-5 mt-4">{% translate "4. Sekcja dolna:" %}</h3>
-                    <ul>
-                        <li>{% translate "Przycisk 'Zobacz kalendarz miesięczny' przekierowujący do widoku kalendarza" %}</li>
-                    </ul>
-                </div>
-            </div>
+<!-- Monthly Calendar Link Section -->
+<section class="mt-5 text-center">
+    <div class="card bg-light">
+        <div class="card-body py-5">
+            <h2 class="mb-4">{% translate "Planujesz swój harmonogram?" %}</h2>
+            <p class="lead mb-4">{% translate "Zobacz wszystkie wydarzenia w naszym kalendarzu miesięcznym, aby lepiej zaplanować swój czas." %}</p>
+            <a href="{% url 'monthly_events' %}" class="btn btn-lg btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                {% translate "Zobacz Kalendarz Miesięczny" %}
+            </a>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header" style="background-color: #003d7c; color: white;">
-                    <h2 class="card-title fs-4 mb-0">{% translate "Uwagi dotyczące dostępności" %}</h2>
-                </div>
-                <div class="card-body">
-                    <p>{% translate "Implementacja strony głównej musi spełniać następujące wymagania WCAG AAA:" %}</p>
-                    <ul>
-                        <li>{% translate "Struktura nagłówków musi być logiczna i hierarchiczna (h1 > h2 > h3)" %}</li>
-                        <li>{% translate "Wszystkie elementy interaktywne muszą mieć odpowiednie etykiety (aria-label)" %}</li>
-                        <li>{% translate "Karty wydarzeń muszą być dostępne z klawiatury i mieć odpowiednie oznaczenia ARIA" %}</li>
-                        <li>{% translate "Informacje przekazywane przez kolor muszą być dostępne również w inny sposób" %}</li>
-                        <li>{% translate "Kontrast kolorystyczny musi spełniać wymagania WCAG AAA (7:1)" %}</li>
-                        <li>{% translate "Układ strony musi być spójny i intuicyjny, z zachowaniem odpowiednich odstępów i czytelności" %}</li>
-                    </ul>
-                    
-                    <p class="mt-4">{% translate "Linki referencyjne:" %}</p>
-                    <ul>
-                        <li><a href="https://www.uws.edu.pl/images/UPH_2023/szablon/logo-UwS/UWS-ksiega-znaku.pdf" target="_blank" rel="noopener noreferrer">{% translate "Księga znaku Uniwersytetu w Siedlcach" %}</a></li>
-                        <li><a href="https://www.w3.org/WAI/WCAG21/quickref/?versions=2.1&levels=aaa" target="_blank" rel="noopener noreferrer">{% translate "Wytyczne WCAG 2.1 AAA" %}</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %} 
+</section>
+{% endblock %}

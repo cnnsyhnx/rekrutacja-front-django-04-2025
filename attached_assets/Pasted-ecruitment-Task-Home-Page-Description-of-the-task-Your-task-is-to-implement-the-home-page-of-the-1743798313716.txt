@@ -1,0 +1,63 @@
+ecruitment Task - Home Page
+Description of the task
+Your task is to implement the home page of the event management system according to the specification below. The home page should present basic information about the system and upcoming events in an attractive and clear manner.
+
+General requirements:
+The implementation must be fully compliant with WCAG AAA (Web Content Accessibility Guidelines) standards.
+The design must be responsive and work properly on mobile devices, tablets and desktops.
+All interface elements must be compliant with the University of Siedlce brand book.
+The primary brand color is #003d7c. Use it as your main accent color.
+Bootstrap 5 should be used as the base CSS framework.
+Data passed to the template
+The following data is passed to the template:
+
+List of upcoming events (upcoming_events):
+A collection of upcoming event objects, where each event contains the following fields:
+
+event.name- event name (string)
+event.description- description of the event (text)
+event.start_date- start date and time (datetime)
+event.end_date- end date and time (datetime)
+event.location- event location (string)
+event.mode- event mode (integer, mapped to 'online', 'stationary', 'hybrid')
+event.get_mode_display- translated mode name (string)
+event.organizer- event organizer (string)
+event.capacity- maximum number of participants (integer)
+event.color- event color (string in HEX format)
+event.pk- event identifier (integer)
+Elements to be implemented
+1. Welcome section (jumbotron):
+Welcome header with application name ('Welcome to Events Manager')
+Subtitle with a short description of the application
+A short text explaining the functionalities of the system
+Action buttons:
+'Browse events' button redirecting to the events list
+'Create an event' button redirecting to the event creation form
+2. Upcoming Events Section:
+Section Header ('Upcoming Events')
+Event Card Grid (3 per width for large screens, 2 for medium, 1 for small)
+Each event card should include:
+Card header with event name on event colored background
+Brief description of the event (maximum 20 words)
+Date and time information (beginning and end)
+Information about the location and mode of the event
+Information about the organizer
+'View Details' button redirecting to event details view
+3. Handling missing upcoming events:
+Message informing about no upcoming events
+Link encouraging to create a new event
+4. Lower section:
+'View Monthly Calendar' button redirects to calendar view
+Accessibility Notes
+Your home page implementation must meet the following WCAG AAA requirements:
+
+The structure of headings must be logical and hierarchical (h1 > h2 > h3)
+All interactive elements must have appropriate labels (aria-label)
+Event cards must be accessible via keyboard and have appropriate ARIA markings
+The information conveyed by color must also be available in other ways
+Color contrast must meet WCAG AAA requirements (7:1)
+The page layout must be consistent and intuitive, with appropriate spacing and readability.
+Reference links:
+
+The University of Siedlce's Brand Book
+WCAG 2.1 AAA Guidelines

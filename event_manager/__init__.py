@@ -1,0 +1,1 @@
+# Event Manager project initialization

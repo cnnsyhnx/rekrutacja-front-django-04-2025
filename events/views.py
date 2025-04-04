@@ -1,42 +1,35 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from datetime import datetime
-from calendar import monthrange
 import calendar
-from django.views.generic import DetailView, CreateView, UpdateView
+from datetime import datetime, date
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.contrib import messages
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
+from django.views.generic.dates import MonthArchiveView
+from django.utils.safestring import mark_safe
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import Event
 from .forms import EventForm
 
-
-def index(request):
-    """
-    Home page view showing the next 5 upcoming events.
-    """
-    upcoming_events = Event.objects.filter(
-        start_date__gte=timezone.now()
-    ).order_by('start_date')[:5]
+class IndexView(TemplateView):
+    template_name = 'events/index.html'
     
-    return render(request, 'events/index.html', {
-        'upcoming_events': upcoming_events,
-    })
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['upcoming_events'] = Event.objects.filter(
+            start_date__gt=timezone.now()
+        ).order_by('start_date')[:6]
+        return context
 
 class EventDetailView(DetailView):
-    """
-    View for displaying event details.
-    """
     model = Event
     template_name = 'events/event_detail.html'
     context_object_name = 'event'
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class EventCreateView(CreateView):
-    """
-    View for creating a new event.
-    """
     model = Event
     form_class = EventForm
     template_name = 'events/event_form.html'
@@ -51,11 +44,8 @@ class EventCreateView(CreateView):
         messages.success(self.request, _('Event created successfully!'))
         return super().form_valid(form)
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class EventUpdateView(UpdateView):
-    """
-    View for updating an existing event.
-    """
     model = Event
     form_class = EventForm
     template_name = 'events/event_form.html'
@@ -65,68 +55,70 @@ class EventUpdateView(UpdateView):
         context['title'] = _('Edit Event')
         return context
     
-    def get_success_url(self):
-        return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
-    
     def form_valid(self, form):
         messages.success(self.request, _('Event updated successfully!'))
         return super().form_valid(form)
 
-
-def monthly_events(request, year=None, month=None):
-    """
-    View for displaying events in a specific month.
-    """
-    if year is None or month is None:
-        now = timezone.now()
-        year = now.year
-        month = now.month
+class MonthlyEventsView(TemplateView):
+    template_name = 'events/monthly_events.html'
     
-    # Get the first and last day of the month
-    first_day = datetime(year, month, 1)
-    _, last_day_of_month = monthrange(year, month)
-    last_day = datetime(year, month, last_day_of_month, 23, 59, 59)
-    
-    # Convert to aware datetime objects
-    first_day = timezone.make_aware(first_day)
-    last_day = timezone.make_aware(last_day)
-    
-    # Get events in this month
-    events = Event.objects.filter(
-        start_date__gte=first_day,
-        start_date__lte=last_day
-    ).order_by('start_date')
-    
-    # Get month name and calendar data
-    month_name = calendar.month_name[month]
-    cal = calendar.monthcalendar(year, month)
-    
-    # Get previous and next month for navigation
-    prev_month = month - 1
-    prev_year = year
-    if prev_month == 0:
-        prev_month = 12
-        prev_year -= 1
-    
-    next_month = month + 1
-    next_year = year
-    if next_month == 13:
-        next_month = 1
-        next_year += 1
-    
-    # Get today's date for highlighting the current day in the calendar
-    today = timezone.now()
-    today_date = today.strftime('%Y-%m-%d')
+    def get_calendar_data(self, year, month):
+        # Create a calendar
+        cal = calendar.monthcalendar(year, month)
         
-    return render(request, 'events/monthly_events.html', {
-        'events': events,
-        'month_name': month_name,
-        'year': year,
-        'calendar': cal,
-        'prev_month': prev_month,
-        'prev_year': prev_year,
-        'next_month': next_month,
-        'next_year': next_year,
-        'current_month': month,
-        'today_date': today_date,
-    })
+        # Get all events for this month
+        events = Event.objects.filter(
+            start_date__year=year,
+            start_date__month=month
+        ).order_by('start_date')
+        
+        # Calculate previous and next month
+        if month == 1:
+            prev_month = 12
+            prev_year = year - 1
+        else:
+            prev_month = month - 1
+            prev_year = year
+            
+        if month == 12:
+            next_month = 1
+            next_year = year + 1
+        else:
+            next_month = month + 1
+            next_year = year
+        
+        # Get month name
+        month_name = calendar.month_name[month]
+        
+        # Format current month with leading zero
+        current_month = f"{month:02d}"
+        
+        # Format today's date
+        today = date.today()
+        today_date = today.strftime("%Y-%m-%d")
+        
+        return {
+            'calendar': cal,
+            'events': events,
+            'month_name': month_name,
+            'year': year,
+            'prev_month': prev_month,
+            'prev_year': prev_year,
+            'next_month': next_month,
+            'next_year': next_year,
+            'current_month': current_month,
+            'today_date': today_date,
+        }
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get year and month from URL parameters, or use current date
+        year = int(self.kwargs.get('year', datetime.now().year))
+        month = int(self.kwargs.get('month', datetime.now().month))
+        
+        # Get calendar data
+        calendar_data = self.get_calendar_data(year, month)
+        context.update(calendar_data)
+        
+        return context
