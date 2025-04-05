@@ -37,7 +37,7 @@ class EventCreateView(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = _('Create Event')
+        context['title'] = _('Utwórz wydarzenie')
         return context
     
     def form_valid(self, form):
