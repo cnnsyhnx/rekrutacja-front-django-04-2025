@@ -39,7 +39,7 @@ MIDDLEWARE = [
 ]
 
 # CSRF Settings
-CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://*.replit.app']
+CSRF_TRUSTED_ORIGINS = []
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True

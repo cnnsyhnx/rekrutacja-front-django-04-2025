@@ -1,6 +1,6 @@
 class CsrfFixMiddleware:
     """
-    Custom middleware to address CSRF issues in the Replit environment.
+    Custom middleware to address CSRF issues in the environment.
     """
     def __init__(self, get_response):
         self.get_response = get_response
