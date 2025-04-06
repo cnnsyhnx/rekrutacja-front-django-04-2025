@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "Rejestracja na wydarzenie" %} | {{ event.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Breadcrumb navigation -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">{% translate "Strona główna" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'monthly_events' %}">{% translate "Wydarzenia" %}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'event_detail' event.pk %}">{{ event.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{% translate "Rejestracja" %}</li>
+                </ol>
+            </nav>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">{% translate "Rejestracja na wydarzenie" %}</h1>
+                </div>
+                <div class="card-body">
+                    {% if event.is_full %}
+                        <div class="alert alert-danger mb-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                            {% translate "Przepraszamy, wszystkie miejsca na to wydarzenie zostały zajęte." %}
+                        </div>
+                    {% elif is_registered %}
+                        <div class="alert alert-info mb-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                            </svg>
+                            {% translate "Jesteś już zarejestrowany na to wydarzenie." %}
+                            <a href="{% url 'event_detail' event.pk %}" class="alert-link">{% translate "Powrót do szczegółów wydarzenia" %}</a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    {% translate "Rejestrujesz się na wydarzenie jako" %} <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h2 class="h5 mb-0">{% translate "Podsumowanie wydarzenia" %}</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>{% translate "Nazwa" %}:</strong> {{ event.name }}</p>
+                                            <p><strong>{% translate "Data i czas" %}:</strong> {{ event.start_date|date:"j E Y, H:i" }}</p>
+                                            <p><strong>{% translate "Lokalizacja" %}:</strong> {{ event.location }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>{% translate "Tryb" %}:</strong> {{ event.get_mode_display }}</p>
+                                            <p><strong>{% translate "Organizator" %}:</strong> {{ event.organizer }}</p>
+                                            <p>
+                                                <strong>{% translate "Dostępne miejsca" %}:</strong> 
+                                                {{ event.capacity|add:"-"|add:event.registered }} / {{ event.capacity }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    {{ form.agree_to_terms }}
+                                    <label class="form-check-label" for="{{ form.agree_to_terms.id_for_label }}">
+                                        {{ form.agree_to_terms.label }}
+                                    </label>
+                                    {% if form.agree_to_terms.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.agree_to_terms.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'event_detail' event.pk %}" class="btn btn-outline-secondary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                                    </svg>
+                                    {% translate "Anuluj" %}
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle me-2" viewBox="0 0 16 16">
+                                        <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                        <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                    </svg>
+                                    {% translate "Zarejestruj się" %}
+                                </button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
