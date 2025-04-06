@@ -44,11 +44,11 @@ class EventCreateView(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = _('Create Event')
+        context['title'] = _('Utwórz Wydarzenie')
         return context
     
     def form_valid(self, form):
-        messages.success(self.request, _('Event created successfully!'))
+        messages.success(self.request, _('Wydarzenie utworzone pomyślnie!'))
         return super().form_valid(form)
 
 
@@ -69,7 +69,7 @@ class EventUpdateView(UpdateView):
         return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
     
     def form_valid(self, form):
-        messages.success(self.request, _('Event updated successfully!'))
+        messages.success(self.request, _('Wydarzenie zostało pomyślnie zaktualizowane!'))
         return super().form_valid(form)
 
 

@@ -1,0 +1,47 @@
+NoReverseMatch at /events/2/
+Reverse for 'event_edit' not found. 'event_edit' is not a valid view function or pattern name.
+Request Method:	GET
+Django Version:	5.2
+Exception Type:	NoReverseMatch
+Exception Value:	
+Reverse for 'event_edit' not found. 'event_edit' is not a valid view function or pattern name.
+Exception Location:	/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/django/urls/resolvers.py, line 831, in _reverse_with_prefix
+Raised during:	events.views.EventDetailView
+Python Executable:	/home/runner/workspace/.pythonlibs/bin/python
+Python Version:	3.11.10
+Python Path:	
+['/home/runner/workspace',
+ '/nix/store/lc7qv2ldzrs1aq3hbyzmbgvn0h2w26pl-sitecustomize/lib/python/site-packages',
+ '/nix/store/dfg63lldbvcj207iyr9z0xw21d8ax02n-python3.11-pip-24.0/lib/python3.11/site-packages',
+ '/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python311.zip',
+ '/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11',
+ '/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/lib-dynload',
+ '/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages',
+ '/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages',
+ '/nix/store/wblvmd5y7izx0z10d1w7ga7zc4apjxmb-python3.11-setuptools-75.1.1/lib/python3.11/site-packages']
+Server time:	Sun, 06 Apr 2025 17:10:48 +0200
+Error during template rendering
+In template /home/runner/workspace/templates/events/event_detail.html, error at line 204
+
+Reverse for 'event_edit' not found. 'event_edit' is not a valid view function or pattern name.
+194	
+195	<!-- Back button -->
+196	<div class="d-flex justify-content-center mt-4">
+197	    <a href="{% url 'monthly_events' %}" class="btn btn-outline-primary me-2">
+198	        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+199	            <line x1="19" y1="12" x2="5" y2="12"></line>
+200	            <polyline points="12 19 5 12 12 5"></polyline>
+201	        </svg>
+202	        {% translate "Powrót do wydarzeń" %}
+203	    </a>
+204	    <a href="{% url 'event_edit' event.pk %}" class="btn btn-primary">
+205	        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2" aria-hidden="true">
+206	            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+207	            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+208	        </svg>
+209	        {% translate "Edytuj wydarzenie" %}
+210	    </a>
+211	</div>
+212	{% endblock %}
+213	
+214	    <!-- Registration Button/Status -->
