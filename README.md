@@ -79,6 +79,8 @@ Menedżer Wydarzeń UWS to aplikacja internetowa stworzona dla Uniwersytetu w Si
 ![Widok listy bieżącego miesiąca](./screenshots/current_month_list_view.png)
 *Umożliwia wyświetlanie wydarzeń z bieżącego miesiąca*
 
+![Widok profilu użytkownika](./screenshots/profile_view.png)  
+*Panel profilu, który umożliwia użytkownikowi przeglądanie swoich przyszłych i minionych wydarzeń, a także zarządzanie nimi oraz wylogowanie się z systemu.*
 
 
 ## Autorzy
