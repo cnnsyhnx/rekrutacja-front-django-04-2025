@@ -207,13 +207,13 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = _('Profil użytkownika')
         
+        now = timezone.now()
         # Get user's registered events
-        user_events = Event.objects.filter(participants=self.request.user).order_by('start_date')
+        user_events = Event.objects.filter(participants=self.request.user)
         
         # Divide events into upcoming and past
-        now = timezone.now()
-        context['upcoming_events'] = user_events.filter(start_date__gt=now)
-        context['past_events'] = user_events.filter(start_date__lte=now)
+        context['upcoming_events'] = user_events.filter(start_date__gt=now).order_by('start_date')
+        context['past_events'] = user_events.filter(start_date__lte=now).order_by('-start_date')
         
         return context
 
